@@ -1,4 +1,4 @@
-local request = require "lib/rate_limit.lua"
+local request = require "lib/rate_limit"
 
 request.limit {
     key = ngx.var.remote_addr, rate = 2,
