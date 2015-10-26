@@ -1,4 +1,5 @@
-local request = require "resty.rate.limit"
+local request = require "lib/rate_limit.lua"
+
 request.limit {
     key = ngx.var.remote_addr, rate = 2,
     interval = 10,
