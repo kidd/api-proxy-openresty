@@ -1,4 +1,28 @@
+# Intro
+
+Example of openresty bootstrap for development and deploy on heroku.
+
+
+## Requirements:
+ - lua 5.2
+ - openresty
+ - redis
+ - foreman
+
+## Development
+
 ```
-$ docker build -t="torhve/openresty" . 
-$ docker run -t -i -p 8080:8080 -v=`pwd`:/helloproj -w=/helloproj torhve/openresty
+$ PORT=8080 foreman start
 ```
+
+## Deploy on heroku
+
+```
+$ heroku create --buildpack http://github.com/leafo/heroku-buildpack-lua.git
+
+# Add the heroku redis addon
+
+$ git push heroku master
+```
+
+Enjoy!
