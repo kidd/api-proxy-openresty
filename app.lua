@@ -18,23 +18,28 @@ local red = redis:new()
 red:set_timeout(1000) -- 1 sec
 
 redisurl = os.getenv("REDIS_URL")
-redisurl_connect = string.split(redisurl, ":")[3]
-redisurl_user = string.split(redisurl_connect, "@")[1]
-redisurl_host = string.split(redisurl_connect, "@")[2]
-redisurl_port = tonumber(string.split(redisurl, ":")[4])
+if(redisurl) then
+  redisurl_connect = string.split(redisurl, ":")[3]
+  redisurl_user = string.split(redisurl_connect, "@")[1]
+  redisurl_host = string.split(redisurl_connect, "@")[2]
+  redisurl_port = tonumber(string.split(redisurl, ":")[4])
 
+  local ok, err = red:connect(redisurl_host, redisurl_port)
+  if not ok then
+    ngx.say("failed to connect: ", err)
+    ngx.exit(ngx.HTTP_OK)
+  end
 
-local ok, err = red:connect(redisurl_host, redisurl_port)
-if not ok then
-  ngx.say("failed to connect: ", err)
-  ngx.exit(ngx.HTTP_OK)
+  local res, err = red:auth(redisurl_user)
+  if not res then
+    ngx.say("failed to authenticate: ", err)
+    return
+  end
+
+else
+  red:connect('127.0.0.1', '6379')
 end
 
-local res, err = red:auth(redisurl_user)
-if not res then
-  ngx.say("failed to authenticate: ", err)
-  return
-end
 
 request.limit {
     key = ngx.var.remote_addr, rate = 5,
