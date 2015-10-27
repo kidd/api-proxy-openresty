@@ -2,6 +2,8 @@
 
 Example of openresty bootstrap for development and deploy on heroku.
 
+Based on https://github.com/leafo/heroku-openresty
+
 
 ## Requirements:
  - lua 5.2
