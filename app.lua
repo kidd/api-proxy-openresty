@@ -1,54 +1,65 @@
+require 'utils'
 local redis = require "resty.redis"
 local request = require "lib/rate_limit"
 
-function string:split(delimiter)
-  local result = { }
-  local from = 1
-  local delim_from, delim_to = string.find( self, delimiter, from )
-  while delim_from do
-    table.insert( result, string.sub( self, from , delim_from-1 ) )
-    from = delim_to + 1
-    delim_from, delim_to = string.find( self, delimiter, from )
+local redis_connect = function()
+  local red = redis:new()
+  red:set_timeout(1000) -- 1 sec
+
+  local redisurl = os.getenv("REDIS_URL")
+  if(redisurl) then
+    redisurl_connect = string.split(redisurl, ":")[3]
+    redisurl_user = string.split(redisurl_connect, "@")[1]
+    redisurl_host = string.split(redisurl_connect, "@")[2]
+    redisurl_port = tonumber(string.split(redisurl, ":")[4])
+
+    local ok, err = red:connect(redisurl_host, redisurl_port)
+    if not ok then
+      ngx.say("failed to connect: ", err)
+      ngx.exit(ngx.HTTP_OK)
+    end
+
+    local res, err = red:auth(redisurl_user)
+    if not res then
+      ngx.say("failed to authenticate: ", err)
+      return nil, 'failed to authenticate'
+    end
+
+  else
+    red:connect('127.0.0.1', '6379')
   end
-  table.insert( result, string.sub( self, from ) )
-  return result
+
+  return red
 end
 
-local red = redis:new()
-red:set_timeout(1000) -- 1 sec
+local resolve_backend = function(server, r)
+  local subdomain = j({"at", "domain" , string.split(server, '%.')[1]}, ':')
 
-redisurl = os.getenv("REDIS_URL")
-if(redisurl) then
-  redisurl_connect = string.split(redisurl, ":")[3]
-  redisurl_user = string.split(redisurl_connect, "@")[1]
-  redisurl_host = string.split(redisurl_connect, "@")[2]
-  redisurl_port = tonumber(string.split(redisurl, ":")[4])
+  ngx.log(DEBUG, 'Redis getting key from ', subdomain)
+  local res, err = r:get(subdomain)
 
-  local ok, err = red:connect(redisurl_host, redisurl_port)
-  if not ok then
-    ngx.say("failed to connect: ", err)
-    ngx.exit(ngx.HTTP_OK)
-  end
-
-  local res, err = red:auth(redisurl_user)
   if not res then
-    ngx.say("failed to authenticate: ", err)
+    ngx.log(DEBUG, "Failed to get dog: ", err)
     return
   end
 
-else
-  red:connect('127.0.0.1', '6379')
+  ngx.log(DEBUG, 'Redirect to: ', res)
 end
 
+local main = function()
+  local args = ngx.req.get_uri_args()
+  ngx.say(ngx.var[args.com])
+end
 
-request.limit {
-    key = ngx.var.remote_addr, rate = 5,
-    interval = 10,
-    log_level = ngx.NOTICE,
-    connection = red,
-    redis_config = {timeout = 1000, pool_size = 100 } }
+local r = redis_connect()
+local backend_host = resolve_backend(ngx.var.host, r)
 
-
-ngx.say("lol")
+-- main()
 ngx.exit(200)
 
+-- request.limit {
+--     key = ngx.var.remote_addr, rate = 5,
+--     interval = 10,
+--     log_level = ngx.NOTICE,
+--     connection = red,
+--     redis_config = {timeout = 1000, pool_size = 100 } }
