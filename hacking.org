@@ -3,8 +3,10 @@
     conf is 'error_log stderr debug;'.  Then in the console, logs appear.
   - lua_code_cache off;
 * Redis keys format
-  All keys start with 'at', the separator is ':'
-  Domain redirects are in keys like:
-  - "at:domain:foo"   and the value is 'http://httpbin.org'
+  - All keys start with 'at', the separator is ':'
+** Domain redirects are in keys like:
+   - "at:domain:foo"   and the value is 'http://httpbin.org'
+** Official plugins list
+   - "at:u:foo:managed" => 'p1;p2;p3;p4'
 * Seeding
   - run seed-redis.sh to create 'foo' and 'bar'

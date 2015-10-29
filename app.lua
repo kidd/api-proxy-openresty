@@ -1,6 +1,8 @@
 require 'utils'
 local redis = require "resty.redis"
+local redis = require "resty.redis"
 local request = require "lib/rate_limit"
+local proxy = require 'lib.proxy'
 
 local redis_connect = function()
   local red = redis:new()
@@ -33,7 +35,7 @@ local redis_connect = function()
 end
 
 local resolve_backend = function(server, r)
-  local subdomain = j({"at", "domain" , string.split(server, '%.')[1]}, ':')
+  local subdomain = j({"at", "subdomain" , string.split(server, '%.')[1]}, ':')
 
   ngx.log(DEBUG, 'Redis getting key from ', subdomain)
   local res, err = r:get(subdomain)
@@ -53,7 +55,11 @@ local main = function()
 end
 
 local r = redis_connect()
-local backend_host = resolve_backend(ngx.var.host, r)
+local host = ngx.var.host
+local backend_host = resolve_backend(host, r)
+
+-- local active_addons = proxy.active_addons(host, r)
+
 ngx.var.target = backend_host
 
 -- main()
