@@ -41,8 +41,10 @@ local resolve_backend = function(server, r)
   ngx.log(DEBUG, 'Redis getting key from ', subdomain)
   local res, err = r:get(subdomain)
 
-  if not res then
+  if ((not res) or res == ngx.null) then
     ngx.log(DEBUG, "Failed to get dog: ", err)
+    ngx.say("subdomain not valid")
+    ngx.exit(404)
     return
   end
 
@@ -60,16 +62,18 @@ local host = ngx.var.host
 local backend_host = resolve_backend(host, r)
 
 -- local active_addons = proxy.active_addons(host, r)
-local active_addons = {'test'}
+local active_addons = {}
+active_addons = {'test', 'threescale_auth'}
+
+ngx.var.target = backend_host
 
 map(function(addon)
-      local a = require(j({"addons", x}, '.'))
+      local a = require(j({"addons",addon, addon}, '.'))
       if a.access then
         a.access()
       end
     end, active_addons)
 
-ngx.var.target = backend_host
 
 -- main()
 -- ngx.exit(200)

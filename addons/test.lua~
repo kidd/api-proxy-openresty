@@ -1,5 +1,0 @@
-local M = {}
-
-local access = function()
-  ngx.log(0, "access phase")
-end

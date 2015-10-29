@@ -1,4 +1,4 @@
-package.path = package.path .. ";lib/?.lua;test/?.lua"
+package.path = package.path .. ";lib/?.lua;test/?.lua;./?.lua;"
 i = require 'lib.inspect'
 
 pinspect = function(t) print(i(t)) end
