@@ -29,3 +29,31 @@ function map(func, tbl)
   end
   return newtbl
 end
+
+function access(addon)
+  local a = require(j({"addons",addon, addon}, '.'))
+  if a.access then
+    a.access()
+  end
+end
+
+function content(addon)
+  local a = require(j({"addons",addon, addon}, '.'))
+  if a.content then
+    a.content()
+  end
+end
+
+function header_filter(addon)
+  local a = require(j({"addons",addon, addon}, '.'))
+  if a.header_filter then
+    a.header_filter()
+  end
+end
+
+function body_filter(addon)
+  local a = require(j({"addons",addon, addon}, '.'))
+  if a.body_filter then
+    a.body_filter()
+  end
+end

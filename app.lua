@@ -67,13 +67,7 @@ active_addons = {'test', 'threescale_auth'}
 
 ngx.var.target = backend_host
 
-map(function(addon)
-      local a = require(j({"addons",addon, addon}, '.'))
-      if a.access then
-        a.access()
-      end
-    end, active_addons)
-
+map(access, active_addons)
 
 -- main()
 -- ngx.exit(200)
