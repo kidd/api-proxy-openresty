@@ -44,6 +44,7 @@ local resolve_backend = function(server, r)
   end
 
   ngx.log(DEBUG, 'Redirect to: ', res)
+  return res
 end
 
 local main = function()
@@ -53,9 +54,10 @@ end
 
 local r = redis_connect()
 local backend_host = resolve_backend(ngx.var.host, r)
+ngx.var.target = backend_host
 
 -- main()
-ngx.exit(200)
+-- ngx.exit(200)
 
 -- request.limit {
 --     key = ngx.var.remote_addr, rate = 5,
