@@ -18,3 +18,14 @@ function string:split(delimiter)
   table.insert( result, string.sub( self, from ) )
   return result
 end
+
+
+-- map(function, table)
+-- e.g: map(double, {1,2,3})    -> {2,4,6}
+function map(func, tbl)
+  local newtbl = {}
+  for i,v in pairs(tbl) do
+    newtbl[i] = func(v)
+  end
+  return newtbl
+end

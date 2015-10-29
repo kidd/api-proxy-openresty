@@ -3,6 +3,7 @@ local redis = require "resty.redis"
 local redis = require "resty.redis"
 local request = require "lib/rate_limit"
 local proxy = require 'lib.proxy'
+local addon = require 'lib.addon'
 
 local redis_connect = function()
   local red = redis:new()
@@ -59,6 +60,14 @@ local host = ngx.var.host
 local backend_host = resolve_backend(host, r)
 
 -- local active_addons = proxy.active_addons(host, r)
+local active_addons = {'test'}
+
+map(function(addon)
+      local a = require(j({"addons", x}, '.'))
+      if a.access then
+        a.access()
+      end
+    end, active_addons)
 
 ngx.var.target = backend_host
 
