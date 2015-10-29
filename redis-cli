@@ -1,0 +1,1 @@
+redis-cli -a h:p5e6m9fsspc05r5jm2goprdhda9 -h ec2-54-83-199-200.compute-1.amazonaws.com -p 12159
