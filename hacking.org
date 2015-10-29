@@ -2,3 +2,7 @@
   - use ngx.log(DEBUG, "my", "log", "message") and make sure line 3 in
     conf is 'error_log stderr debug;'.  Then in the console, logs appear.
   - lua_code_cache off;
+* Redis keys format
+  All keys start with 'at', the separator is ':'
+  Domain redirects are in keys like:
+  - "at:domain:foo"   and the value is 'http://httpbin.org'
