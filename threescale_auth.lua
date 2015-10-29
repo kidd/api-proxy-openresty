@@ -1,14 +1,14 @@
 local threescale = require "threescale"
 
 local service = {
-  id        = "2555417724260",
-  auth_type = "headers"
+  id            = "2555417724260",
+  auth_key_name = "apikey"
 }
 
 local function get_auth_params(request)
   local headers = ngx.req.get_headers()
-  if headers["apikey"] then
-    return headers["apikey"]
+  if headers[service.auth_key_name] then
+    return headers[service.auth_key_name]
   else
     ngx.status = 403
     ngx.print("Authentication parameters missing")
