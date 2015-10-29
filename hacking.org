@@ -6,3 +6,5 @@
   All keys start with 'at', the separator is ':'
   Domain redirects are in keys like:
   - "at:domain:foo"   and the value is 'http://httpbin.org'
+* Seeding
+  - run seed-redis.sh to create 'foo' and 'bar'
