@@ -5,6 +5,7 @@ pinspect = function(t) print(i(t)) end
 j = function(t, s) return table.concat(t, (s or '')) end
 
 DEBUG = ngx.DEBUG
+D = ngx.DEBUG
 
 function string:split(delimiter)
   local result = { }

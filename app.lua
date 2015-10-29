@@ -59,18 +59,16 @@ end
 
 local r = redis_connect()
 local host = ngx.var.host
+local subdomain = string.split(host, '%.')[1]
+ngx.log(D, subdomain)
 local backend_host = resolve_backend(host, r)
 
--- local active_addons = proxy.active_addons(host, r)
-local active_addons = {}
-active_addons = {'test', 'threescale_auth'}
+local active_addons = proxy.active_addons(subdomain, r)
+ngx.log(D, pinspect(active_addons))
 
 ngx.var.target = backend_host
 
 map(access, active_addons)
-
--- main()
--- ngx.exit(200)
 
 -- request.limit {
 --     key = ngx.var.remote_addr, rate = 5,
