@@ -1,7 +1,7 @@
 local threescale = require "threescale"
 
 local service = {
-  id        = "2555417724260"
+  id        = "2555417724260",
   auth_type = "headers"
 }
 
@@ -23,7 +23,7 @@ end
 local function get_threescale_method(request)
   local method, path, query_fragment = request:match("^(.+) ([^%?]+)(%??.*) .+$")
   local parsed_path = path:gsub("^%/", ""):gsub("%/$", "")
-  local threescale_method = method .. "_" .. parsed_path
+  return method .. "_" .. parsed_path
 end
 
 local function authorize(key, usage, service)
@@ -37,5 +37,6 @@ end
 
 local key = get_auth_params()
 local threescale_method = get_threescale_method(ngx.var.request)
-local usage = { hits = 1 }
+ngx.log(0, threescale_method)
+local usage = { [threescale_method] = 1 }
 authorize(key, usage, service)
