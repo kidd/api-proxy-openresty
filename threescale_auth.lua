@@ -22,7 +22,7 @@ end
 --    - method: "GET_api_endpoint"
 local function get_threescale_method(request)
   local method, path, query_fragment = request:match("^(.+) ([^%?]+)(%??.*) .+$")
-  local parsed_path = path:gsub("^%/", ""):gsub("%/$", "")
+  local parsed_path = path:gsub("^%/", ""):gsub("%/$", ""):gsub("%/", "_")
   return method .. "_" .. parsed_path
 end
 
