@@ -6,7 +6,9 @@
   - All keys start with 'at', the separator is ':'
 ** Domain redirects are in keys like:
    - "at:domain:foo"   and the value is 'http://httpbin.org'
-** Official plugins list
-   - "at:u:foo:managed" => 'p1;p2;p3;p4'
+** Official addons list
+   - "at:addons:foo" => 'p1;p2;p3;p4'
+** Official middleware list
+   - "at:middleware:foo" => ['return {access = ngx.log(0,"hola")}', ...]
 * Seeding
   - run seed-redis.sh to create 'foo' and 'bar'

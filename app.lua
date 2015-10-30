@@ -4,6 +4,7 @@ local redis = require "resty.redis"
 local request = require "lib/rate_limit"
 local proxy = require 'lib.proxy'
 local addon = require 'lib.addon'
+local middleware = require 'lib.middleware'
 
 local redis_connect = function()
   local red = redis:new()
@@ -65,10 +66,23 @@ local backend_host = resolve_backend(host, r)
 
 local active_addons = proxy.active_addons(subdomain, r)
 ngx.log(D, pinspect(active_addons))
-
 ngx.var.target = backend_host
-
 map(access, active_addons)
+
+local active_middleware = middleware.active_middleware(subdomain, r)
+-- local active_plugins = {'test_middleware'}
+
+-- local active_plugins = {"local M = {} ;M.access = function()   ngx.log(0, 'access from middleware1') end return M"}
+
+local middleware = map(function(x)
+    local f = assert(loadstring(x))
+    return f()
+    end, active_middleware)
+
+map(function(x)
+    x.access()
+    end, middleware)
+
 
 -- request.limit {
 --     key = ngx.var.remote_addr, rate = 5,
