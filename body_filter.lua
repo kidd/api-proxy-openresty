@@ -13,6 +13,7 @@ end
 function body_filter(addon)
   local a = require(j({"addons",addon, addon}, '.'))
   if a.body_filter then
+    ngx.log(0, "body will be " ,i(a))
     a.body_filter()
   end
 end

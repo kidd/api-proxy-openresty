@@ -65,16 +65,22 @@ ngx.log(D, subdomain)
 local backend_host = resolve_backend(host, r)
 
 local active_addons = proxy.active_addons(subdomain, r)
+ngx.ctx.active_addons = active_addons
+
 ngx.log(D, pinspect(active_addons))
 ngx.var.target = backend_host
-map(access, active_addons)
+map(function(addon)
+    local a = require(j({"addons",addon, addon}, '.'))
+    if a.access then
+      a.access(r)
+    end
+    end
+    , active_addons)
 
 local active_middleware = {}
 
 active_middleware = middleware.active_middleware(subdomain, r)
-
--- local active_plugins = {'test_middleware'}
--- local active_plugins = {"local M = {} ;M.access = function()   ngx.log(0, 'access from middleware1') end return M"}
+ngx.log(D, 'active_middleware', pinspect(active_middleware))
 
 local middleware = map(function(x)
     local f = assert(loadstring(x))
@@ -82,7 +88,9 @@ local middleware = map(function(x)
     end, active_middleware)
 
 map(function(x)
-    x.access(r)
+    if x.access then
+      x.access()
+    end
     end, middleware)
 
 -- request.limit {

@@ -1,7 +1,7 @@
 local M = {}
 
 M.access = function()
-  ngx.log(0, "access phase")
+  ngx.log(0, "ACCESS PHASE")
 end
 
 M.content = function()

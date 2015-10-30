@@ -39,18 +39,26 @@ end
 local get_config = function(r)
   local host = ngx.var.host
   local subdomain = string.split(host, '%.')[1]
-  return {
-    id = r:hget(j({'at', 'addons', subdomain, 'config' }), 'id'),
-    auth_key_name = r:hget(j({'at', 'addons', subdomain, 'config' }), 'auth_key_name')
+
+  threescale.config.provider_key = r:hget(j({'at', 'addons', subdomain, 'config' }, ':'), 'provider_key')
+  local res =  {
+    id = r:hget(j({'at', 'addons', subdomain, 'config' }, ':'), 'id'),
+    auth_key_name = r:hget(j({'at', 'addons', subdomain, 'config' }, ':'), 'auth_key_name')
   }
+
+  return res
 end
 
 
 
 function M.access(r)
   local key = get_auth_params()
+  ngx.log(0, ' key is', key)
   local threescale_method = get_threescale_method(ngx.var.request)
   ngx.log(0, threescale_method)
+
+  ngx.log(0, 'configs => ', i(get_config(r)))
+
   local usage = { [threescale_method] = 1 }
   service = get_config(r)
 
