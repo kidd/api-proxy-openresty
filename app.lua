@@ -69,9 +69,11 @@ ngx.log(D, pinspect(active_addons))
 ngx.var.target = backend_host
 map(access, active_addons)
 
-local active_middleware = middleware.active_middleware(subdomain, r)
--- local active_plugins = {'test_middleware'}
+local active_middleware = {}
 
+active_middleware = middleware.active_middleware(subdomain, r)
+
+-- local active_plugins = {'test_middleware'}
 -- local active_plugins = {"local M = {} ;M.access = function()   ngx.log(0, 'access from middleware1') end return M"}
 
 local middleware = map(function(x)
@@ -80,9 +82,8 @@ local middleware = map(function(x)
     end, active_middleware)
 
 map(function(x)
-    x.access()
+    x.access(r)
     end, middleware)
-
 
 -- request.limit {
 --     key = ngx.var.remote_addr, rate = 5,
