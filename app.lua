@@ -1,7 +1,5 @@
 require 'utils'
 local redis = require "resty.redis"
-local redis = require "resty.redis"
-local request = require "lib/rate_limit"
 local proxy = require 'lib.proxy'
 local addon = require 'lib.addon'
 local middleware = require 'lib.middleware'
@@ -92,10 +90,3 @@ map(function(x)
       x.access()
     end
     end, middleware)
-
--- request.limit {
---     key = ngx.var.remote_addr, rate = 5,
---     interval = 10,
---     log_level = ngx.NOTICE,
---     connection = red,
---     redis_config = {timeout = 1000, pool_size = 100 } }
