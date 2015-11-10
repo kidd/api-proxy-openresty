@@ -6,8 +6,8 @@ local map = u.map
 
 map(function(addon)
       local a = require(j({"addons",addon, addon}, '.'))
-      if a.body_filter then
-        a.body_filter(r)
+      if a.headers_filter then
+        a.headers_filter(r)
       end
     end
   , ngx.ctx.active_addons)

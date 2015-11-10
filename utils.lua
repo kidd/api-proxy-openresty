@@ -1,11 +1,8 @@
 package.path = package.path .. ";lib/?.lua;test/?.lua;./?.lua;"
 i = require 'lib.inspect'
-
 pinspect = function(t) print(i(t)) end
 j = function(t, s) return table.concat(t, (s or '')) end
-
-DEBUG = ngx.DEBUG
-D = ngx.DEBUG
+local D = ngx.DEBUG
 
 function string:split(delimiter)
   local result = { }
@@ -58,3 +55,10 @@ function body_filter(addon)
     a.body_filter()
   end
 end
+
+return {
+  i = i,
+  D = D,
+  j = j,
+  map = map
+}
