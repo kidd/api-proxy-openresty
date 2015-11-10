@@ -1,0 +1,11 @@
+apisonator:
+  subdomain: foo
+  middleware:
+    - cors
+      rabo
+  addons:
+    3scale:
+      api_key: vodafone-2irnd
+    librato:
+      api_key: mecagondios
+      user: my_foo_id
