@@ -65,7 +65,10 @@ local backend_host = resolve_backend(host, r)
 local active_addons = proxy.active_addons(subdomain, r)
 ngx.ctx.active_addons = active_addons
 
--- ngx.log(D, pinspect(active_addons))
+--
+-- we prepare the shared space for each addon to mess around
+map(function(addon) ngx.ctx[addon] = {} end, active_addons)
+
 ngx.var.target = backend_host
 map(function(addon)
       local a = require(j({"addons",addon, addon}, '.'))
@@ -78,7 +81,6 @@ map(function(addon)
 local active_middleware = {}
 
 active_middleware = middleware.active_middleware(subdomain, r)
--- ngx.log(D, 'active_middleware', pinspect(active_middleware))
 
 local middleware = map(function(x)
     local f = assert(loadstring(x))
