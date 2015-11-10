@@ -69,24 +69,31 @@ ngx.ctx.active_addons = active_addons
 -- we prepare the shared space for each addon to mess around
 map(function(addon) ngx.ctx[addon] = {} end, active_addons)
 
+-- target of the proxy pass
 ngx.var.target = backend_host
-map(function(addon)
+
+
+-- Access addons
+each(function(addon)
       local a = require(j({"addons",addon, addon}, '.'))
       if a.access then
         a.access(r)
       end
     end
-  , active_addons)
+  , iter(active_addons))
 
-local active_middleware = {}
 
-active_middleware = middleware.active_middleware(subdomain, r)
 
+local active_middleware = middleware.active_middleware(subdomain, r)
+ngx.ctx.active_middleware = active_middleware
+
+-- load middleware
 local middleware = map(function(x)
     local f = assert(loadstring(x))
     return f()
     end, active_middleware)
 
+-- access middleware
 map(function(x)
     if x.access then
       x.access()
