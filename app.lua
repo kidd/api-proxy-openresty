@@ -8,8 +8,9 @@ local redis_connect = function()
   local red = redis:new()
   red:set_timeout(1000) -- 1 sec
 
-  local redisurl = os.getenv("REDIS_URL")
-  if(redisurl) then
+  local redisurl = os.getenv("REDIS_URL") or '127.0.0.1'
+
+  if(redisurl and string.find(redisurl, '@')) then
     redisurl_connect = string.split(redisurl, ":")[3]
     redisurl_user = string.split(redisurl_connect, "@")[1]
     redisurl_host = string.split(redisurl_connect, "@")[2]
@@ -28,7 +29,7 @@ local redis_connect = function()
     end
 
   else
-    red:connect('127.0.0.1', '6379')
+    red:connect(redisurl, '6379')
   end
 
   return red
@@ -65,13 +66,11 @@ local backend_host = resolve_backend(host, r)
 local active_addons = proxy.active_addons(subdomain, r)
 ngx.ctx.active_addons = active_addons
 
---
 -- we prepare the shared space for each addon to mess around
 map(function(addon) ngx.ctx[addon] = {} end, active_addons)
 
 -- target of the proxy pass
 ngx.var.target = backend_host
-
 
 -- Access addons
 each(function(addon)
@@ -81,8 +80,6 @@ each(function(addon)
       end
     end
   , iter(active_addons))
-
-
 
 local active_middleware = middleware.active_middleware(subdomain, r)
 ngx.ctx.active_middleware = active_middleware
