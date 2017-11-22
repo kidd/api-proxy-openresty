@@ -15,12 +15,12 @@
 
 
 
+-- This is the main driver of apisonator.
+--
 -- It's purpose is to load the appropriate middleware for a given
 -- request based on the subdomain of the request, and evaluate the
 -- functions of the different addons and middleware in the different
 -- nginx phases.
---
--- This is the main driver of apisonator.
 --
 -- The setup to make a basic roundtrip is:
 --
