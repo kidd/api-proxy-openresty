@@ -8,8 +8,8 @@ M.content = function()
   ngx.log(0, "content phase")
 end
 
-M.headers_filter = function()
-  ngx.log(0, "headers filter phase")
+M.log = function()
+  ngx.log(0, "LOG PHASE")
 end
 
 -- M.headers_filter = function()
